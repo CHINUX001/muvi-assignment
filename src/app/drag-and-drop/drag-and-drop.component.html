@@ -1,0 +1,181 @@
+<div class="drag-drop-wrap container">
+  <div class="row  no-gutters">
+    <div class="content-wrap  content-wrap--left col-md-3">
+      <div id="list-one" class="left-content-parent"
+           #toDoList="cdkDropList"
+           [cdkDropListConnectedTo]="[doneList]"
+           cdkDropList
+           cdkDropListSortingDisabled
+           [cdkDropListData]="todo"
+           (cdkDropListDropped)="drop($event)" (cdkDropListEntered)="entered($event)">
+        <div class="example-box" *ngFor="let item of todo" cdkDrag>
+          <ng-container *ngTemplateOutlet="contentToRender; context: { $implicit: item }"></ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="content-wrap  content-wrap--right col-md-9">
+      <div id="list-two" class="right-content-parent"
+           #doneList="cdkDropList"
+           [cdkDropListConnectedTo]="[toDoList]"
+           cdkDropList
+           [cdkDropListData]="done"
+           (cdkDropListDropped)="drop($event)" (cdkDropListEntered)="entered($event)">
+        <div class="example-box" *ngFor="let item of done" cdkDrag>
+          <div [style.text-align]="item?.align ? item?.align : 'left'">
+            <ng-container *ngTemplateOutlet="contentToRender; context: { $implicit: item }"></ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #contentToRender let-item>
+  <container-element [ngSwitch]="item?.type">
+    <some-element *ngSwitchCase="'image'">
+      <img [src]="item.source" alt="image" class="img-thumbnail" [style]="item?.stylings">
+    </some-element>
+    <some-element *ngSwitchCase="'video'">
+
+      <video controls #videoPlayer autoplay *ngIf="item.autoplay" [style]="item?.stylings">
+        <source [src]="item.source" type="video/mp4">
+        Browser not supported
+      </video>
+      <video controls #videoPlayer [style]="item?.stylings" *ngIf="!item.autoplay">
+        <source [src]="item.source" type="video/mp4">
+        Browser not supported
+      </video>
+    </some-element>
+    <some-element *ngSwitchDefault>
+      {{item}}
+    </some-element>
+  </container-element>
+</ng-template>
+
+
+<ng-template #modalTemplate>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Drop Settings</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <container-element [ngSwitch]="currentDroppingItemType">
+      <some-element *ngSwitchCase="'image'">
+        <ng-container [ngTemplateOutlet]="imageSettings"> </ng-container>
+      </some-element>
+      <some-element *ngSwitchCase="'video'">
+        <ng-container [ngTemplateOutlet]="videoSettings"> </ng-container>
+      </some-element>
+      <some-element *ngSwitchCase="'text'">
+<!--        <ng-container [ngTemplateOutlet]="imageSettings"> </ng-container>-->
+      </some-element>
+      <some-element *ngSwitchDefault>
+
+      </some-element>
+    </container-element>
+  </div>
+</ng-template>
+
+<ng-template #imageSettings>
+  <form (ngSubmit)="submitImageSettingsForm()"
+        [formGroup]="imageSettingsForm" class="container">
+    <div class="o-switch btn-group no-outline" data-toggle="buttons" role="group">
+      <label class="btn btn-secondary">
+        <input type="radio" autocomplete="off" value="left" formControlName="align"> Left
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" autocomplete="off" value="center" formControlName="align"> Center
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" autocomplete="off" value="right" formControlName="align"> Right
+      </label>
+    </div>
+    <ng-container formGroupName="stylings">
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label>Width</label>
+          <input type="text" class="form-control" placeholder="Width" required formControlName="width">
+        </div>
+        <div class="col-sm-6">
+          <label>Height</label>
+          <input type="text" class="form-control" placeholder="Height" required formControlName="height">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label>Border</label>
+          <input type="text" class="form-control" placeholder="Border" required formControlName="border">
+        </div>
+        <div class="col-sm-6">
+          <label>Margin</label>
+          <input type="text" class="form-control" placeholder="Margin" required formControlName="margin">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label>Padding</label>
+          <input type="text" class="form-control" placeholder="Padding" required formControlName="padding">
+        </div>
+      </div>
+
+    </ng-container>
+    <button class="btn btn-info btn-block my-4" type="submit">Save</button>
+  </form>
+</ng-template>
+
+<ng-template #videoSettings>
+  <form (ngSubmit)="submitVideoSettingsForm()"
+        [formGroup]="videoSettingsForm" class="container">
+    <div class="o-switch btn-group no-outline" data-toggle="buttons" role="group">
+      <label class="btn btn-secondary">
+        <input type="radio" autocomplete="off" value="left" formControlName="align"> Left
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" autocomplete="off" value="center" formControlName="align"> Center
+      </label>
+      <label class="btn btn-secondary">
+        <input type="radio" autocomplete="off" value="right" formControlName="align"> Right
+      </label>
+    </div>
+    <ng-container formGroupName="stylings">
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label for="width">Width</label>
+          <input type="text" class="form-control" id="width" placeholder="Width" required formControlName="width">
+        </div>
+        <div class="col-sm-6">
+          <label for="height">Height</label>
+          <input type="text" class="form-control" id="height" placeholder="Height" required formControlName="height">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label for="border">Border</label>
+          <input type="text" class="form-control" id="border" placeholder="Border" required formControlName="border">
+        </div>
+        <div class="col-sm-6">
+          <label for="margin">Margin</label>
+          <input type="text" class="form-control" id="margin" placeholder="Margin" required formControlName="margin">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-6">
+          <label>Padding</label>
+          <input type="text" class="form-control" placeholder="Padding" required formControlName="padding">
+        </div>
+      </div>
+    </ng-container>
+    <div class="col-sm-6">
+      <label class="checkbox-inline">
+        <input type="checkbox" formControlName="autoplay"> Autoplay
+      </label>
+    </div>
+    <button class="btn btn-info btn-block my-4" type="submit">Save</button>
+  </form>
+</ng-template>
