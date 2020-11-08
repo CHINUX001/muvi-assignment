@@ -13,6 +13,7 @@ export class DragAndDropComponent implements OnInit {
   modalRef: BsModalRef;
   imageSettingsForm: FormGroup;
   videoSettingsForm: FormGroup;
+  textSettingsForm: FormGroup;
 
   defaultImageProperties = {
     type: 'image',
@@ -40,7 +41,20 @@ export class DragAndDropComponent implements OnInit {
       padding: '0px',
     },
   }
-  todo = [this.defaultImageProperties, this.defaultVideoProperties];
+
+  defaultTextProperties = {
+    type: 'text',
+    source: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+    align: 'center',
+    bold: false,
+    italic: false,
+    underline: false,
+    stylings: {
+      margin: '0px',
+      padding: '0px',
+    },
+  }
+  todo = [this.defaultImageProperties, this.defaultVideoProperties, this.defaultTextProperties];
   done = [];
   @ViewChild('modalTemplate', {static: true}) modalTemplate: ElementRef;
   currentDroppingItemType: string;
@@ -52,6 +66,7 @@ export class DragAndDropComponent implements OnInit {
   ngOnInit(): void {
     this.intializeImageForm();
     this.intializeVideoForm();
+    this.intializeTextForm();
   }
 
   drop(event: CdkDragDrop<[]>) {
@@ -59,16 +74,12 @@ export class DragAndDropComponent implements OnInit {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(event.previousContainer.data, event.container.data,
-                        event.previousIndex, event.currentIndex);
+        event.previousIndex, event.currentIndex);
       if (event.container.id === 'list-two') {
-        this.currentDroppingItemType = (_.last(this.done)).type;
+        this.currentDroppingItemType = (this.done[event.currentIndex]).type;
         this.modalRef = this.modalService.show(this.modalTemplate);
       }
     }
-  }
-
-  entered(event) {
-    console.log('cool event', event);
   }
 
   openModal(template: TemplateRef<any>) {
@@ -106,6 +117,21 @@ export class DragAndDropComponent implements OnInit {
     });
   }
 
+  intializeTextForm() {
+    this.textSettingsForm = this.formBuilder.group({
+      type: [this.defaultTextProperties.type],
+      source: [this.defaultTextProperties.source],
+      align: [this.defaultTextProperties.align],
+      bold: [this.defaultTextProperties.bold],
+      italic: [this.defaultTextProperties.italic],
+      underline: [this.defaultTextProperties.underline],
+      stylings: this.formBuilder.group({
+        margin: [this.defaultTextProperties.stylings.margin, [Validators.required]],
+        padding: [this.defaultTextProperties.stylings.padding, [Validators.required]],
+      })
+    });
+  }
+
   submitImageSettingsForm(): void {
     if (this.imageSettingsForm.valid) {
       let imagePropertiesIndex = _.findIndex(this.done, (item) => {
@@ -130,8 +156,15 @@ export class DragAndDropComponent implements OnInit {
     }
   }
 
-  isImageSettingsInvalid(): boolean {
-    return this.imageSettingsForm.invalid ? true : false;
+  submitTextSettingsForm(): void {
+    if (this.textSettingsForm.valid) {
+      let textPropertiesIndex = _.findIndex(this.done, (item) => {
+        return item && item.type === 'text';
+      })
+      if (textPropertiesIndex >= 0) {
+        this.done[textPropertiesIndex] = this.textSettingsForm.value;
+      }
+      this.modalRef.hide();
+    }
   }
-
 }

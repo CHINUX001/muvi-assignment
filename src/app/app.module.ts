@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {ButtonsModule} from "ngx-bootstrap/buttons";
 import {ModalModule} from "ngx-bootstrap/modal";
+import {AlertModule} from "ngx-bootstrap/alert";
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import {ModalModule} from "ngx-bootstrap/modal";
     AppRoutingModule,
     BrowserAnimationsModule,
     ButtonsModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    AlertModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -4,6 +4,7 @@ import {DragAndDropComponent} from "./drag-and-drop.component";
 import {DragAndDropRouting} from "./drag-and-drop.routing";
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {AlertModule} from "ngx-bootstrap/alert";
 
 @NgModule({
   declarations: [DragAndDropComponent],
@@ -12,7 +13,8 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
     DragAndDropRouting,
     DragDropModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AlertModule
   ]
 })
 export class DragAndDropModule {}
