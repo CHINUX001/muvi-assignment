@@ -123,17 +123,14 @@ export class DragAndDropComponent implements OnInit {
       let videoPropertiesIndex = _.findIndex(this.done, (item) => {
         return item && item.type === 'video';
       })
-      console.log('video properties', videoPropertiesIndex);
       if (videoPropertiesIndex >= 0) {
         this.done[videoPropertiesIndex] = this.videoSettingsForm.value;
       }
-      console.log('submitted', this.videoSettingsForm.value);
       this.modalRef.hide();
     }
   }
 
   isImageSettingsInvalid(): boolean {
-    console.log('yp', this.imageSettingsForm.invalid);
     return this.imageSettingsForm.invalid ? true : false;
   }
 
